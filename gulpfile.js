@@ -1,7 +1,9 @@
 var gulp = require('gulp'),  // node.js command to bring in gulp library to create different tasks with gulp
     gutil = require('gulp-util'),
     coffee = require('gulp-coffee'),
+    browserify = require('gulp-browserify'),
     gconcat = require('gulp-concat');
+
 
 /*
 gulp.task('log', function() {
@@ -29,6 +31,7 @@ gulp.task('coffee', function() {
 gulp.task('js', function() {
 	gulp.src(jsSources)
 	.pipe(gconcat('script.js'))  // index.html:   <script src="js/script.js"></script>
+	.pipe(browserify())
 	.pipe(gulp.dest('builds/development/js'))
 
 });
