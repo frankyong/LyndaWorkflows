@@ -1,4 +1,4 @@
-/ _base.scss
+// _base.scss
 // ==============
 body {
   background: lighten($beige, 10%);
@@ -53,4 +53,3 @@ section {
 .artgroup {
     @include clearfix;
 } //artgroup
-:w

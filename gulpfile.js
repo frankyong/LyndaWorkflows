@@ -1,6 +1,7 @@
 var gulp = require('gulp'),  // node.js command to bring in gulp library to create different tasks with gulp
     gutil = require('gulp-util'),
     coffee = require('gulp-coffee'),
+    compass = require('gulp-compass'),
     browserify = require('gulp-browserify'),
     gconcat = require('gulp-concat');
 
@@ -21,6 +22,8 @@ var jsSources = [
 	'components/scripts/template.js'
 ]; //this order is the order in which the files will get processed
 
+var sassSources = ['components/sass/style.sass'];  //don't need to include all sass files because sass has its own import commands
+
 gulp.task('coffee', function() {
 	gulp.src(coffeeSources)  //first specify the original location of what I want to process.  Could be an array of files or an individual one     
 	.pipe(coffee({bare:true}) //coffee variable above and use one of the coffeescript options in the language     
@@ -35,3 +38,16 @@ gulp.task('js', function() {
 	.pipe(gulp.dest('builds/development/js'))
 
 });
+
+gulp.task('compass', function() {
+	gulp.src(sassSources)
+	.pipe(compass({
+		css: 'builds/development/css', //automatically places the output css file here.  No need for dest pipe value
+		sass: 'components/sass',   //where the sass files are located
+		image: 'builds/development/images',
+		style: 'expanded' //sass output style that we're using [nested|expanded|compact|compressed]
+	})
+	.on('error', gutil.log))
+});
+
+gulp.task('all',['coffee', 'js', 'compass']);
