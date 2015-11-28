@@ -50,8 +50,13 @@ gulp.task('compass', function() {
 		})
 		.on('error', gutil.log) //so that crashes won't stop execution of other gulp tasks     
 	)
-	.pipe(gulp.dest('builds/development/css'))
-	.pipe(connect.reload());
+	//.pipe(gulp.dest('builds/development/css'))
+	//.pipe(connect.reload()) // this doesn't work for whatever reason so I had to create a separate task to watch the resulting css file and reload on that
+});
+
+gulp.task('cssReload', function (){
+	gulp.src("builds/development/css/*")
+	.pipe(connect.reload())
 });
 
 
@@ -63,6 +68,7 @@ gulp.task('watch', function(){
 	gulp.watch(coffeeSources, ['coffee'])
 	gulp.watch(jsSources, ['js'])
 	gulp.watch('components/sass/*.scss', ['compass'])
+	gulp.watch('builds/development/css/*', ['cssReload'])
 });
 
 gulp.task('connect', function() {
