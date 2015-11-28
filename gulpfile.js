@@ -5,6 +5,7 @@ var gulp = require('gulp'),  // node.js command to bring in gulp library to crea
     connect = require('gulp-connect'),
     browserify = require('gulp-browserify'),
     notify = require('gulp-notify'),
+    debug = require('gulp-debug'),
     concat = require('gulp-concat');
 
 
@@ -41,13 +42,15 @@ gulp.task('js', function() {
 	.pipe(notify({message: 'Just completed creeating js files'}))
 });
 
+
 var sassSources = ['components/sass/style.scss'];  //don't need to include all sass files because sass has its own import commands
 
 gulp.task('compass', function() {
 	gulp.src(sassSources)
+	.pipe(debug({title: 'compass task:'}))
 	//.pipe(notify({message: 'About to create css files'}))
 	.pipe(compass({
-		//css: 'builds/development/css', //automatically places the output css file here.  No need for dest pipe value
+		css: 'builds/development/css', //automatically places the output css file here.  No need for dest pipe value
 		sass: 'components/sass',   //where the sass files are located
 		image: 'builds/development/images',
 		style: 'expanded' //sass output style that we're using [nested|expanded|compact|compressed]
