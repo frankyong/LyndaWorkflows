@@ -4,7 +4,7 @@ var gulp = require('gulp'),  // node.js command to bring in gulp library to crea
     compass = require('gulp-compass'),
     connect = require('gulp-connect'),
     browserify = require('gulp-browserify'),
-    gconcat = require('gulp-concat');
+    concat = require('gulp-concat');
 
 
 /*
@@ -34,7 +34,7 @@ gulp.task('coffee', function() {
 
 gulp.task('js', function() {
 	gulp.src(jsSources)
-	.pipe(gconcat('script.js'))  // index.html:   <script src="js/script.js"></script>
+	.pipe(concat('script.js'))  // index.html:   <script src="js/script.js"></script>
 	.pipe(browserify())
 	.pipe(gulp.dest('builds/development/js'))
 	.pipe(connect.reload())
@@ -47,11 +47,13 @@ gulp.task('compass', function() {
 		sass: 'components/sass',   //where the sass files are located
 		image: 'builds/development/images',
 		style: 'expanded' //sass output style that we're using [nested|expanded|compact|compressed]
-	})
-	.on('error', gutil.log))
+		})
+		.on('error', gutil.log) //so that crashes won't stop execution of other gulp tasks     
+	)
 	.pipe(gulp.dest('builds/development/css'))
-	.pipe(connect.reload())
+	.pipe(connect.reload());
 });
+
 
 gulp.task('all',['coffee', 'js', 'compass']);
 gulp.task('default',['coffee', 'js', 'compass', 'connect','watch']);
@@ -60,7 +62,7 @@ gulp.task('default',['coffee', 'js', 'compass', 'connect','watch']);
 gulp.task('watch', function(){
 	gulp.watch(coffeeSources, ['coffee'])
 	gulp.watch(jsSources, ['js'])
-	gulp.watch('components/sass/*', ['compass'])
+	gulp.watch('components/sass/*.scss', ['compass'])
 });
 
 gulp.task('connect', function() {
