@@ -77,7 +77,7 @@ $ = require('jquery');
 
 (fill = function(item) {
   return $('.tagline').append("" + item);
-})('asdfasCreative minds in art!');
+})('Creative minds in art!');
 
 fill;
 
