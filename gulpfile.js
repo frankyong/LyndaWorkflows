@@ -24,7 +24,8 @@ var jsSources = [
 	'components/scripts/tagline.js',
 	'components/scripts/template.js'
 ]; //this order is the order in which the files will get processed
-
+var htmlSources = ['builds/development/*.html'];
+var jsonSources = ['builds/development/js/*.json'];
 
 gulp.task('coffee', function() {
 	gulp.src(coffeeSources)  //first specify the original location of what I want to process.  Could be an array of files or an individual one     
@@ -39,7 +40,7 @@ gulp.task('js', function() {
 	.pipe(browserify())
 	.pipe(gulp.dest('builds/development/js'))
 	.pipe(connect.reload())
-	.pipe(notify({message: 'Just completed creeating js files'}))
+	.pipe(notify({message: 'Just completed creating js files'}))
 });
 
 
@@ -59,7 +60,7 @@ gulp.task('compass', function() {
 	)
 	.pipe(gulp.dest('builds/development/css'))
 	.pipe(connect.reload()) // this doesn't work for whatever reason so I had to create a separate task to watch the resulting css file and reload on that
-	//.pipe(notify({message: 'Just completed creeating css files'}))
+	//.pipe(notify({message: 'Just completed creating css files'}))
 });
 
 /*
@@ -70,14 +71,15 @@ gulp.task('cssReload', function (){
 */
 
 gulp.task('all',['coffee', 'js', 'compass']);
-gulp.task('default',['coffee', 'js', 'compass', 'connect','watch']);
+gulp.task('default',['coffee', 'js', 'compass', 'json','html','connect','watch']);
 
 
 gulp.task('watch', function(){
-	gulp.watch(coffeeSources, ['coffee'])
-	gulp.watch(jsSources, ['js'])
-	gulp.watch('components/sass/*.scss', ['compass'])
-	// gulp.watch('builds/development/css/*', ['cssReload'])
+	gulp.watch(coffeeSources, ['coffee']);
+	gulp.watch(jsSources, ['js']);
+	gulp.watch('components/sass/*.scss', ['compass']);
+	gulp.watch(htmlSources, ['html']);
+	gulp.watch(jsonSources, ['json']);
 });
 
 gulp.task('connect', function() {
@@ -87,3 +89,12 @@ gulp.task('connect', function() {
 	})
 });
 
+gulp.task ('html', function() {
+	gulp.src(htmlSources)
+	.pipe(connect.reload())
+});
+
+gulp.task ('json', function() {
+	gulp.src(jsonSources)
+	.pipe(connect.reload())
+});
