@@ -6,6 +6,8 @@ var gulp = require('gulp'),  // node.js command to bring in gulp library to crea
     browserify = require('gulp-browserify'),
     notify = require('gulp-notify'),
     debug = require('gulp-debug'),
+    gulpif = require('gulp-if'),
+    uglify = require('gulp-uglify'),
     concat = require('gulp-concat');
 
 var env, sassStyle, coffeeSources, jsSources, htmlSources, jsonSources, sassSources, outputDir
@@ -60,6 +62,7 @@ gulp.task('js', function() {
 	gulp.src(jsSources)
 	.pipe(concat('script.js'))  // index.html:   <script src="js/script.js"></script>
 	.pipe(browserify())
+	.pipe(gulpif(env === 'production', uglify()))
 	.pipe(gulp.dest(outputDir + 'js'))
 	.pipe(connect.reload())
 	.pipe(notify({message: 'Just completed creating js files'}))
