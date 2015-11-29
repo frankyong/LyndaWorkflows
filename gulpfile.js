@@ -8,6 +8,28 @@ var gulp = require('gulp'),  // node.js command to bring in gulp library to crea
     debug = require('gulp-debug'),
     concat = require('gulp-concat');
 
+var env, sassStyle, coffeeSources, jsSources, htmlSources, jsonSources, sassSources, outputDir
+
+// Check an environment variable and assign it to env.  Otherwise, default to value of development 
+var env = process.env.NODE_ENV || 'default';
+
+if (env==='development') {
+	outputDir = 'builds/development/';
+	gutil.log("development environment found");
+	sassStyle = 'expanded';
+} else if (env==='production') {
+	outputDir = 'builds/production/';
+	gutil.log("production environment found");
+	sassStyle = 'compressed';
+} else if (env==='default') {
+	outputDir = 'builds/development/';
+	gutil.log("environment variable not found.  default");
+	sassStyle = 'expanded';
+} else {
+	outputDir = 'builds/development/';
+	gutil.log("unknown environment value");
+	sassStyle = 'expanded';
+}
 
 /*
 gulp.task('log', function() {
@@ -17,15 +39,15 @@ gulp.task('log', function() {
 }); //create a taks called log
 */
 
-var coffeeSources = ['components/coffee/tagline.coffee'];
-var jsSources = [
+coffeeSources = ['components/coffee/tagline.coffee'];
+jsSources = [
 	'components/scripts/rclick.js',
 	'components/scripts/pixgrid.js',
 	'components/scripts/tagline.js',
 	'components/scripts/template.js'
 ]; //this order is the order in which the files will get processed
-var htmlSources = ['builds/development/*.html'];
-var jsonSources = ['builds/development/js/*.json'];
+htmlSources = [outputDir + '*.html'];
+jsonSources = [outputDir + 'js/*.json'];
 
 gulp.task('coffee', function() {
 	gulp.src(coffeeSources)  //first specify the original location of what I want to process.  Could be an array of files or an individual one     
@@ -38,27 +60,27 @@ gulp.task('js', function() {
 	gulp.src(jsSources)
 	.pipe(concat('script.js'))  // index.html:   <script src="js/script.js"></script>
 	.pipe(browserify())
-	.pipe(gulp.dest('builds/development/js'))
+	.pipe(gulp.dest(outputDir + 'js'))
 	.pipe(connect.reload())
 	.pipe(notify({message: 'Just completed creating js files'}))
 });
 
 
-var sassSources = ['components/sass/style.scss'];  //don't need to include all sass files because sass has its own import commands
+sassSources = ['components/sass/style.scss'];  //don't need to include all sass files because sass has its own import commands
 
 gulp.task('compass', function() {
 	gulp.src(sassSources)
 	.pipe(debug({title: 'compass task:'}))
 	//.pipe(notify({message: 'About to create css files'}))
 	.pipe(compass({
-		css: 'builds/development/css', //automatically places the output css file here.  No need for dest pipe value
+		css: outputDir + 'css', //automatically places the output css file here.  No need for dest pipe value
 		sass: 'components/sass',   //where the sass files are located
-		image: 'builds/development/images',
-		style: 'expanded' //sass output style that we're using [nested|expanded|compact|compressed]
+		image: outputDir + 'images',
+		style: sassStyle //sass output style that we're using [nested|expanded|compact|compressed]
 		})
 		.on('error', gutil.log) //so that crashes won't stop execution of other gulp tasks     
 	)
-	.pipe(gulp.dest('builds/development/css'))
+	.pipe(gulp.dest(outputDir + 'css'))
 	.pipe(connect.reload()) // this doesn't work for whatever reason so I had to create a separate task to watch the resulting css file and reload on that
 	//.pipe(notify({message: 'Just completed creating css files'}))
 });
@@ -84,7 +106,7 @@ gulp.task('watch', function(){
 
 gulp.task('connect', function() {
 	connect.server({
-		root: 'builds/development/',
+		root: outputDir,
 		livereload: true
 	})
 });
